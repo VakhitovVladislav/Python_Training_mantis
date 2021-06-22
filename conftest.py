@@ -5,7 +5,6 @@ import os.path
 import importlib
 
 
-
 fixture = None
 target = None
 
@@ -25,8 +24,7 @@ def app(request):
     browser = request.config.getoption("--browser")
     web_config = load_config(request.config.getoption("--target"))['web']
     if fixture is None or not fixture.is_valid():
-        fixture = Application(browser=browser, base_url=web_config['baseUrl'], base_password=web_config['password'])
-    fixture.session.ensure_login(username=web_config['username'], base_password=web_config['password'])
+        fixture = Application(browser=browser, base_url=web_config['baseUrl'])
     return fixture
 
 
@@ -35,6 +33,7 @@ def stop(request):
     def fin():
         fixture.session.ensure_logout()
         fixture.destroy()
+
     request.addfinalizer(fin)
     return fixture
 
@@ -54,16 +53,11 @@ def pytest_generate_tests(metafunc):
             testdata = load_from_json(fixture[5:])
             metafunc.parametrize(fixture, testdata, ids=[str(x) for x in testdata])
 
-    
+
 def load_from_module(module):
     return importlib.import_module("data.%s" % module).testdata
 
 
-#def load_from_json(file):
-    #with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/%s.json" % file)) as f:
-        #return jsonpickle.decode(f.read())
-
-
-
-
-
+def load_from_json(file):
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/%s.json" % file)) as f:
+        return jsonpickle.decode(f.read())

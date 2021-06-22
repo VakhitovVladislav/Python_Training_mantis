@@ -1,12 +1,12 @@
 from selenium import webdriver
 from fixture.session import SessionHelper
-from fixture.Contact_helper import ContactHelper
-from fixture.Group_helper import GroupHelper
+from fixture.project_helper import ProjectHelper
+
 
 
 class Application:
 
-    def __init__(self, browser, base_url, base_password):
+    def __init__(self, browser, base_url):
         if browser == "firefox":
             self.wd = webdriver.Firefox()
         elif browser == "chrome":
@@ -16,10 +16,8 @@ class Application:
         else:
             raise ValueError("Unrecognized browser %s" % browser)
         self.session = SessionHelper(self)
-        self.group = GroupHelper(self)
-        self.contact = ContactHelper(self)
+        self.project = ProjectHelper(self)
         self.base_url = base_url
-        self.base_password = base_password
 
     def is_valid(self):
         try:
